@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Prog Funcional</title>
+</head>
+
+<body>
+</body>
+<script>
+    var pedido = [{
+        precio: 9.11,
+        uds: 7
+    }, {
+        precio: 86,
+        uds: 2
+    }, {
+        precio: 212.5,
+        uds: 3
+    }, {
+        precio: 6,
+        uds: 1
+    }, {
+        precio: 22,
+        uds: 8
+    }]
+
+
+    var curry =
+        (fn, initArgs = []) =>
+        (...newArgs) => {
+            let all = [...initArgs, ...newArgs];
+            return fn.length > all.length ? curry(fn, all) : fn(...all);
+        };
+
+
+    var reduce = curry((fn, init, xs) => {
+        for (elem of xs) {
+            init = fn(init, elem)
+        };
+        return init
+    });
+    var map = curry((fn, xs) => reduce((acc, elem) => [...acc, fn(elem)], [], xs));
+    var seq = curry((fns, init) => reduce((acc, fn) => fn(acc), init, fns));
+
+    var suma = curry((a, b) => a + b);
+    var mult = curry((a, b) => a * b);
+
+    var precioLinea = map(linea => linea.precio * linea.uds);
+    var conIva = map(mult(1.21));
+    var sumaTodo = reduce(suma, 0);
+
+    var calculo = seq([precioLinea, conIva, sumaTodo]);
+
+     ¡ 
+    console.log('calc', calculo(pedido));
+
+    var sumaFoo = (a,b,c) => a+b+c;
+    var sumaCurr = curry(sumaFoo,3);
+</script>
+
+</html>
